@@ -10,8 +10,10 @@ To get through this issue we will utilize Set-ExecutionPolicy -Scope Process Byp
 ![](images/Pasted%20image%2020261008065612.png)
 ![](images/Pasted%20image%2020261008065528.png)
 Next we will run a test script notepad test_playwright.py this will open a notepad file where we will store the script for we will use
-![](images/Pasted%20image%2020261008065816.png)This code essentially runs playwright as sync which means each doe runs after the other and calls playwright with the "with" blocker making sure playwright shuts down regardless of how the code ran. Headless is set to false so that we may see a visible chromium window.Example.com will be loaded and we will wait three seconds and then close it.
-![](images/Pasted%20image%2020261011160249.png)This was opened on the browser proving that the python environment is working properly
+![](images/Pasted%20image%2020261008065816.png)
+This code essentially runs playwright as sync which means each doe runs after the other and calls playwright with the "with" blocker making sure playwright shuts down regardless of how the code ran. Headless is set to false so that we may see a visible chromium window.Example.com will be loaded and we will wait three seconds and then close it.
+![](images/Pasted%20image%2020261011160249.png)
+This was opened on the browser proving that the python environment is working properly
 
 So now that we have confirmed that we have downloaded mitmproxy,playwright and chromium and have tested whether scripts will properly execute in the python environment we set up we shall now move onto checking whether the traffic capture functionality required for the project will work as intended.
 
@@ -20,7 +22,9 @@ Now we will open up another terminal and run mitmdump -p 8080 -w capture.flow wh
 ![](images/Pasted%20image%2020261011162025.png)
 
 To test the pipeline we have set up we will use the following python script
+
 ![](images/Pasted%20image%2020261011171810.png)
+
 This script launches Playwright’s own copy of Chromium, not your regular Chrome and headless = False makes the window visible. The `proxy` setting is applied at launch, so that all of this browser’s web traffic goes to mitmdump on port 8080. We will create a new context for this as first of all in Playwright a page cannot exist on its own and secondly it would make it very easy for us to get a clean slate if we want to retry the experiment and dont want cache and cookies from the previous attempt to carry over. We set ignore_https_errors=True because normally speaking when the browser would connect example.com it would check the sites certificate against CA in order to prove the connection is encrypted and no one else can read it however because mitmdump proxy sits in the middle it responds with its own certificate instead which chromium does not trust and would return with a site is not secure error and so with  ignore_https_errors=True it tells chromium to accept the certificate so pages load and mitmdump can read them. The remainder of the script simply opens the page for three seconds with the title and then closes it.
 
 Now we shall run the script and see if the pipeline we have built so far is working as intended.
